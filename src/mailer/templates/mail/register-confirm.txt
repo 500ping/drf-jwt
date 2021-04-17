@@ -1,0 +1,2 @@
+Hello {{ username }}!
+Click here to complete your register {{ url }}: 

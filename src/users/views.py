@@ -12,6 +12,7 @@ from .serializers import UserSerializer, UserRegisterSerializer, UserLoginSerial
 from .tokens import CustomToken
 
 from .models import NewUser
+from mailer.mail import resgister_confirm
 
 
 class UserLoginView(TokenObtainPairView):
@@ -31,7 +32,7 @@ class UserRegisterView(APIView):
                 response['message'] = 'Check your email to verification'
 
                 confirm_token = CustomToken.for_user(user)
-                send_mail('Email Verification', str(confirm_token), 'admin@gmail.com', [user.email,], fail_silently=False)
+                resgister_confirm(user, confirm_token) # Send email
 
                 return Response(response, status=status.HTTP_201_CREATED)
         return Response(req_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -41,15 +42,16 @@ class RegisterEmailConfirm(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, token):
-        # print(token)
         validated_token = JWTAuthentication.get_validated_token(self, token)
         user_id = validated_token['user_id']
-        # print(user_id)
         user = get_object_or_404(NewUser, id=user_id)
         if user:
             user.is_active = True
             user.save()
-            return Response(user.is_active)
+            return Response({
+                "status": 'active',
+                "message": 'Login now!'
+            })
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
