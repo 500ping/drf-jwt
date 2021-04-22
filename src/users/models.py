@@ -47,7 +47,7 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['user_name', 'first_name' , 'lass_name', 'password']
+    REQUIRED_FIELDS = ['user_name', 'first_name' , 'last_name', 'password']
 
     class Meta:
         verbose_name_plural = "Users"
